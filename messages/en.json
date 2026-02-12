@@ -1,0 +1,115 @@
+{
+  "common": {
+    "appName": "Global Meet Adjuster",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "confirm": "Confirm",
+    "back": "Back",
+    "copy": "Copy",
+    "copied": "Copied!"
+  },
+  "auth": {
+    "loginWithGoogle": "Sign in with Google",
+    "logout": "Sign out",
+    "loginRequired": "Please sign in to continue"
+  },
+  "landing": {
+    "title": "Schedule meetings across time zones",
+    "subtitle": "A scheduling tool with automatic timezone conversion",
+    "cta": "Get started for free"
+  },
+  "dashboard": {
+    "title": "My Events",
+    "empty": "No events yet",
+    "createNew": "Create new event",
+    "status": {
+      "planning": "Planning",
+      "fixed": "Confirmed"
+    }
+  },
+  "event": {
+    "create": {
+      "title": "Create New Event",
+      "eventTitle": "Event Title",
+      "eventTitlePlaceholder": "e.g., Weekly Team Standup",
+      "memo": "Notes",
+      "memoPlaceholder": "Add any additional details",
+      "duration": "Meeting Duration",
+      "durationOptions": {
+        "30": "30 min",
+        "60": "1 hour",
+        "90": "1.5 hours",
+        "120": "2 hours"
+      },
+      "candidates": "Candidate Dates",
+      "addCandidate": "Add candidate date",
+      "noCandidates": "Please add at least one candidate date",
+      "submit": "Create Event",
+      "goToEvent": "Go to event page"
+    },
+    "edit": {
+      "title": "Edit Event",
+      "removeCandidateWarning": "Responses for this date will also be removed. Continue?",
+      "submit": "Save Changes"
+    },
+    "delete": {
+      "title": "Delete Event",
+      "message": "This event and all responses will be permanently deleted. This action cannot be undone.",
+      "fixedWarning": "This event has been confirmed. Deleting it cannot be undone. Are you sure?",
+      "confirm": "Delete"
+    },
+    "detail": {
+      "hostTimezone": "Host timezone",
+      "yourTimezone": "Your timezone",
+      "fixedBanner": "This date has been confirmed",
+      "confirmedDate": "Confirmed date"
+    },
+    "share": {
+      "title": "Share Event",
+      "copyUrl": "Copy URL",
+      "line": "Share via LINE",
+      "email": "Share via Email",
+      "qrCode": "QR Code"
+    },
+    "fix": {
+      "title": "Confirm Date",
+      "message": "Are you sure you want to confirm this date?",
+      "confirm": "Confirm"
+    }
+  },
+  "voting": {
+    "newResponse": "Add your response",
+    "editResponse": "Edit response",
+    "ok": "◯",
+    "maybe": "△",
+    "ng": "×",
+    "noAnswer": "−",
+    "summary": "Summary",
+    "guestName": "Your Name",
+    "guestNamePlaceholder": "John Doe",
+    "guestEmail": "Email (optional)",
+    "guestEmailPlaceholder": "example@email.com",
+    "submit": "Submit Response",
+    "update": "Update Response",
+    "duplicateEmail": "This email is already registered. Click your existing response to edit it."
+  },
+  "timezone": {
+    "local": "Local time",
+    "host": "Host time"
+  },
+  "validation": {
+    "required": "This field is required",
+    "maxLength": "Exceeds maximum character limit",
+    "pastDate": "Cannot select a past date",
+    "minCandidates": "Please add at least one candidate date",
+    "invalidEmail": "Please enter a valid email address"
+  },
+  "error": {
+    "generic": "An error occurred. Please try again.",
+    "notFound": "Event not found",
+    "unauthorized": "You are not authorized"
+  }
+}

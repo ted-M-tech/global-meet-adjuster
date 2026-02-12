@@ -1,0 +1,115 @@
+{
+  "common": {
+    "appName": "Global Meet Adjuster",
+    "loading": "読み込み中...",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "confirm": "確定",
+    "back": "戻る",
+    "copy": "コピー",
+    "copied": "コピーしました"
+  },
+  "auth": {
+    "loginWithGoogle": "Googleでログイン",
+    "logout": "ログアウト",
+    "loginRequired": "ログインが必要です"
+  },
+  "landing": {
+    "title": "時差を超えて、会議をスムーズに",
+    "subtitle": "タイムゾーンを自動変換する日程調整ツール",
+    "cta": "無料で始める"
+  },
+  "dashboard": {
+    "title": "イベント一覧",
+    "empty": "イベントはまだありません",
+    "createNew": "新しいイベントを作成",
+    "status": {
+      "planning": "調整中",
+      "fixed": "確定済み"
+    }
+  },
+  "event": {
+    "create": {
+      "title": "新しいイベントを作成",
+      "eventTitle": "イベントタイトル",
+      "eventTitlePlaceholder": "例: 週次定例ミーティング",
+      "memo": "メモ",
+      "memoPlaceholder": "補足情報があれば入力してください",
+      "duration": "会議時間",
+      "durationOptions": {
+        "30": "30分",
+        "60": "1時間",
+        "90": "1.5時間",
+        "120": "2時間"
+      },
+      "candidates": "候補日時",
+      "addCandidate": "候補日を追加",
+      "noCandidates": "候補日を1つ以上追加してください",
+      "submit": "イベントを作成",
+      "goToEvent": "イベントページへ"
+    },
+    "edit": {
+      "title": "イベントを編集",
+      "removeCandidateWarning": "この候補日への回答も削除されます。よろしいですか？",
+      "submit": "変更を保存"
+    },
+    "delete": {
+      "title": "イベントを削除",
+      "message": "このイベントと全ての回答が削除されます。この操作は取り消せません。",
+      "fixedWarning": "このイベントは確定済みです。削除すると復元できません。本当に削除しますか？",
+      "confirm": "削除する"
+    },
+    "detail": {
+      "hostTimezone": "主催者のタイムゾーン",
+      "yourTimezone": "あなたのタイムゾーン",
+      "fixedBanner": "この日程で確定しました",
+      "confirmedDate": "確定日時"
+    },
+    "share": {
+      "title": "イベントを共有",
+      "copyUrl": "URLをコピー",
+      "line": "LINEで共有",
+      "email": "メールで共有",
+      "qrCode": "QRコード"
+    },
+    "fix": {
+      "title": "日程を確定",
+      "message": "この日程で確定しますか？",
+      "confirm": "確定する"
+    }
+  },
+  "voting": {
+    "newResponse": "新しく回答する",
+    "editResponse": "回答を編集",
+    "ok": "◯",
+    "maybe": "△",
+    "ng": "×",
+    "noAnswer": "−",
+    "summary": "集計",
+    "guestName": "お名前",
+    "guestNamePlaceholder": "山田太郎",
+    "guestEmail": "メールアドレス（任意）",
+    "guestEmailPlaceholder": "example@email.com",
+    "submit": "回答を送信",
+    "update": "回答を更新",
+    "duplicateEmail": "このメールアドレスは既に登録されています。回答を編集する場合は、既存の回答をクリックしてください。"
+  },
+  "timezone": {
+    "local": "ローカル時間",
+    "host": "主催者時間"
+  },
+  "validation": {
+    "required": "必須項目です",
+    "maxLength": "文字数が上限を超えています",
+    "pastDate": "過去の日時は選択できません",
+    "minCandidates": "候補日を1つ以上追加してください",
+    "invalidEmail": "有効なメールアドレスを入力してください"
+  },
+  "error": {
+    "generic": "エラーが発生しました。もう一度お試しください。",
+    "notFound": "イベントが見つかりません",
+    "unauthorized": "権限がありません"
+  }
+}
