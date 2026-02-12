@@ -19,8 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CandidatePicker } from './candidate-picker';
-import { CandidateList } from './candidate-list';
+import { TimeGridPicker } from './time-grid-picker';
 import { SharePanel } from './share-panel';
 import { createEvent, updateEvent } from '@/app/actions/event';
 import { getBrowserTimezone } from '@/lib/timezone';
@@ -174,7 +173,7 @@ export function EventForm({ mode, event }: EventFormProps) {
   const isCreate = mode === 'create';
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-4xl mx-auto">
       <Card>
         <CardHeader>
           <CardTitle>
@@ -233,14 +232,11 @@ export function EventForm({ mode, event }: EventFormProps) {
 
             <div className="space-y-3">
               <Label>{t('create.candidates')}</Label>
-              <CandidateList
+              <TimeGridPicker
                 candidates={candidates}
-                onRemove={handleRemoveCandidate}
-                timezone={event?.timezone}
-              />
-              <CandidatePicker
                 duration={duration}
                 onAdd={handleAddCandidate}
+                onRemove={handleRemoveCandidate}
               />
             </div>
 

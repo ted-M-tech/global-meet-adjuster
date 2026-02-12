@@ -18,7 +18,7 @@ export default function LandingPage() {
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-12rem)]">
       <div className="max-w-2xl mx-auto text-center space-y-8">
         <div className="space-y-4">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl whitespace-nowrap">
             {t('landing.title')}
           </h1>
           <p className="text-lg text-muted-foreground">

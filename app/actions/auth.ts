@@ -5,7 +5,7 @@ import { FieldValue } from 'firebase-admin/firestore';
 import { adminAuth, adminDb } from '@/lib/firebase/admin';
 import { SESSION_COOKIE_NAME, SESSION_EXPIRY_MS } from '@/lib/constants';
 
-export async function signIn(idToken: string): Promise<{ success: boolean }> {
+export async function signIn(idToken: string): Promise<{ success: boolean; error?: string }> {
   try {
     const decoded = await adminAuth.verifyIdToken(idToken);
 
@@ -35,8 +35,10 @@ export async function signIn(idToken: string): Promise<{ success: boolean }> {
     );
 
     return { success: true };
-  } catch {
-    return { success: false };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('[signIn] Failed:', message);
+    return { success: false, error: message };
   }
 }
 

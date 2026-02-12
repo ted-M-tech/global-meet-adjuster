@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { CheckCircle, Edit, Lock, Trash2 } from 'lucide-react';
@@ -41,6 +41,10 @@ export function EventDetail({ initialEvent }: EventDetailProps) {
     : null;
 
   const [showFixDialog, setShowFixDialog] = useState(false);
+
+  const browserTz = useMemo(() => getBrowserTimezone(), []);
+  const defaultSecondaryTz = browserTz !== event.timezone ? event.timezone : null;
+  const [secondaryTz, setSecondaryTz] = useState<string | null>(defaultSecondaryTz);
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -110,7 +114,7 @@ export function EventDetail({ initialEvent }: EventDetailProps) {
                 onClick={() => router.push(`/${locale}/events/${event.id}/edit`)}
               >
                 <Edit className="mr-1 h-4 w-4" />
-                {tCommon('edit')}
+                {t('editEvent')}
               </Button>
               <Button
                 size="sm"
@@ -142,6 +146,8 @@ export function EventDetail({ initialEvent }: EventDetailProps) {
         hostTimezone={event.timezone}
         isFixed={isFixed}
         fixedCandidateId={event.fixedCandidateId}
+        secondaryTz={secondaryTz}
+        onSecondaryTzChange={setSecondaryTz}
       />
 
       {/* Fix event dialog */}

@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -35,11 +36,27 @@ const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const sessionRefreshed = useRef(false);
 
   useEffect(() => {
-    return onAuthStateChanged(auth, (firebaseUser) => {
+    return onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
       setLoading(false);
+
+      // Auto-refresh server session when client-side auth is valid
+      // This handles expired session cookies (5-day maxAge)
+      if (firebaseUser && !sessionRefreshed.current) {
+        sessionRefreshed.current = true;
+        try {
+          const idToken = await firebaseUser.getIdToken();
+          const result = await serverSignIn(idToken);
+          if (!result.success) {
+            console.error('[AuthProvider] Session refresh failed:', result.error);
+          }
+        } catch (err) {
+          console.error('[AuthProvider] Session refresh error:', err);
+        }
+      }
     });
   }, []);
 
@@ -48,11 +65,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const result = await signInWithPopup(auth, provider);
     const idToken = await result.user.getIdToken();
     await serverSignIn(idToken);
+    sessionRefreshed.current = true;
   }, []);
 
   const handleSignOut = useCallback(async () => {
     await firebaseSignOut(auth);
     await serverSignOut();
+    sessionRefreshed.current = false;
   }, []);
 
   return (

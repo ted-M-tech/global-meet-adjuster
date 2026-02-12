@@ -2,7 +2,12 @@ import { z } from 'zod';
 
 export const DURATIONS = [30, 60, 90, 120] as const;
 
-export const durationSchema = z.enum(['30', '60', '90', '120']).transform(Number) as z.ZodType<30 | 60 | 90 | 120>;
+export const durationSchema = z.coerce
+  .number()
+  .refine(
+    (n): n is 30 | 60 | 90 | 120 => [30, 60, 90, 120].includes(n),
+    { message: 'Invalid duration' }
+  ) as z.ZodType<30 | 60 | 90 | 120>;
 
 export const candidateSchema = z.object({
   start: z.coerce.date().refine(

@@ -48,7 +48,17 @@
       "addCandidate": "Add candidate date",
       "noCandidates": "Please add at least one candidate date",
       "submit": "Create Event",
-      "goToEvent": "Go to event page"
+      "goToEvent": "Go to event page",
+      "timeGrid": {
+        "selectDates": "Select dates on the calendar",
+        "dragHint": "Drag to select time range",
+        "tapHint": "Tap to add candidate",
+        "overlap": "Overlaps with an existing candidate",
+        "pastTime": "Cannot select past time",
+        "hasCandidate": "Cannot remove a date with candidates",
+        "prevDay": "Previous day",
+        "nextDay": "Next day"
+      }
     },
     "edit": {
       "title": "Edit Event",
@@ -65,7 +75,8 @@
       "hostTimezone": "Host timezone",
       "yourTimezone": "Your timezone",
       "fixedBanner": "This date has been confirmed",
-      "confirmedDate": "Confirmed date"
+      "confirmedDate": "Confirmed date",
+      "editEvent": "Edit candidates"
     },
     "share": {
       "title": "Share Event",
@@ -94,7 +105,22 @@
     "guestEmailPlaceholder": "example@email.com",
     "submit": "Submit Response",
     "update": "Update Response",
-    "duplicateEmail": "This email is already registered. Click your existing response to edit it."
+    "duplicateEmail": "This email is already registered. Click your existing response to edit it.",
+    "bestCandidate": "Best option",
+    "respondents": "Respondents",
+    "yourVote": "Your vote",
+    "noResponses": "No responses yet",
+    "noCandidates": "No candidate dates",
+    "okLabel": "◯ OK",
+    "maybeLabel": "△ Maybe",
+    "ngLabel": "× NG",
+    "durationMinutes": "{count}min",
+    "editTokenExpired": "Your edit session has expired. Please add a new response.",
+    "tapToVote": "Tap a time slot to vote",
+    "prevDay": "Previous day",
+    "nextDay": "Next day",
+    "secondaryTimezone": "Secondary timezone",
+    "secondaryTzNone": "None"
   },
   "timezone": {
     "local": "Local time",

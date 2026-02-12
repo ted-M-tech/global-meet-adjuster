@@ -48,7 +48,17 @@
       "addCandidate": "候補日を追加",
       "noCandidates": "候補日を1つ以上追加してください",
       "submit": "イベントを作成",
-      "goToEvent": "イベントページへ"
+      "goToEvent": "イベントページへ",
+      "timeGrid": {
+        "selectDates": "カレンダーで日付を選択してください",
+        "dragHint": "ドラッグで時間帯を選択",
+        "tapHint": "タップで候補を追加",
+        "overlap": "既存の候補と重複しています",
+        "pastTime": "過去の時刻は選択できません",
+        "hasCandidate": "候補のある日付は削除できません",
+        "prevDay": "前の日",
+        "nextDay": "次の日"
+      }
     },
     "edit": {
       "title": "イベントを編集",
@@ -65,7 +75,8 @@
       "hostTimezone": "主催者のタイムゾーン",
       "yourTimezone": "あなたのタイムゾーン",
       "fixedBanner": "この日程で確定しました",
-      "confirmedDate": "確定日時"
+      "confirmedDate": "確定日時",
+      "editEvent": "候補日時を編集"
     },
     "share": {
       "title": "イベントを共有",
@@ -94,7 +105,22 @@
     "guestEmailPlaceholder": "example@email.com",
     "submit": "回答を送信",
     "update": "回答を更新",
-    "duplicateEmail": "このメールアドレスは既に登録されています。回答を編集する場合は、既存の回答をクリックしてください。"
+    "duplicateEmail": "このメールアドレスは既に登録されています。回答を編集する場合は、既存の回答をクリックしてください。",
+    "bestCandidate": "最有力候補",
+    "respondents": "回答者",
+    "yourVote": "あなたの回答",
+    "noResponses": "まだ回答がありません",
+    "noCandidates": "候補日時がありません",
+    "okLabel": "◯ OK",
+    "maybeLabel": "△ たぶん",
+    "ngLabel": "× NG",
+    "durationMinutes": "{count}分",
+    "editTokenExpired": "編集セッションが期限切れです。新しい回答を追加してください。",
+    "tapToVote": "候補をタップして回答",
+    "prevDay": "前の日",
+    "nextDay": "次の日",
+    "secondaryTimezone": "第二タイムゾーン",
+    "secondaryTzNone": "なし"
   },
   "timezone": {
     "local": "ローカル時間",

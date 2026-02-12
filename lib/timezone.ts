@@ -1,6 +1,28 @@
-import { formatInTimeZone } from 'date-fns-tz';
+import { formatInTimeZone, fromZonedTime } from 'date-fns-tz';
 import { ja, enUS } from 'date-fns/locale';
 import type { Locale } from '@/types';
+
+export const COMMON_TIMEZONES = [
+  'Pacific/Honolulu',
+  'America/Anchorage',
+  'America/Los_Angeles',
+  'America/Denver',
+  'America/Chicago',
+  'America/New_York',
+  'America/Sao_Paulo',
+  'Atlantic/Reykjavik',
+  'Europe/London',
+  'Europe/Paris',
+  'Europe/Helsinki',
+  'Asia/Dubai',
+  'Asia/Kolkata',
+  'Asia/Bangkok',
+  'Asia/Shanghai',
+  'Asia/Seoul',
+  'Asia/Tokyo',
+  'Australia/Sydney',
+  'Pacific/Auckland',
+] as const;
 
 const localeMap = {
   ja,
@@ -103,4 +125,17 @@ export function getTimezoneName(timezone: string, locale: Locale = 'ja'): string
   const shortTz = shortParts.find((p) => p.type === 'timeZoneName')?.value || '';
 
   return `${tzName} (${shortTz})`;
+}
+
+/**
+ * Get short timezone abbreviation.
+ * Example: "America/Los_Angeles" → "PST", "Asia/Tokyo" → "JST"
+ */
+export function getTimezoneAbbr(timezone: string): string {
+  const fmt = new Intl.DateTimeFormat('en-US', {
+    timeZone: timezone,
+    timeZoneName: 'short',
+  });
+  return fmt.formatToParts(new Date())
+    .find((p) => p.type === 'timeZoneName')?.value || timezone;
 }

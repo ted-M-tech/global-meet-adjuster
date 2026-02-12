@@ -1,16 +1,29 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { VotingTable } from './voting-table';
-import { VotingCard } from './voting-card';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { VotingTimeGrid } from './voting-time-grid';
+import { VotingTimeGridMobile } from './voting-time-grid-mobile';
 import { GuestProfileDialog } from './guest-profile-dialog';
 import { useEditToken } from '@/hooks/use-edit-token';
 import { registerGuest } from '@/app/actions/guest';
 import { updateGuestAnswer } from '@/app/actions/guest';
+import { getBrowserTimezone, getTimezoneName, COMMON_TIMEZONES } from '@/lib/timezone';
 import type { Candidate, GuestDocument, VoteStatus, Answer } from '@/types';
+import type { Locale } from '@/types';
+import { useLocale } from 'next-intl';
 
 interface VotingFormProps {
   eventId: string;
@@ -19,6 +32,8 @@ interface VotingFormProps {
   hostTimezone: string;
   isFixed: boolean;
   fixedCandidateId?: string;
+  secondaryTz: string | null;
+  onSecondaryTzChange: (tz: string | null) => void;
 }
 
 type FormMode = 'view' | 'new' | 'edit';
@@ -30,9 +45,13 @@ export function VotingForm({
   hostTimezone,
   isFixed,
   fixedCandidateId,
+  secondaryTz,
+  onSecondaryTzChange,
 }: VotingFormProps) {
   const t = useTranslations('voting');
+  const tCommon = useTranslations('common');
   const tError = useTranslations('error');
+  const locale = useLocale() as Locale;
   const { getToken, saveToken, findMyGuestId } = useEditToken();
 
   const [mode, setMode] = useState<FormMode>('view');
@@ -40,26 +59,25 @@ export function VotingForm({
   const [editingAnswers, setEditingAnswers] = useState<Record<string, VoteStatus>>({});
   const [showProfileDialog, setShowProfileDialog] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [pendingName, setPendingName] = useState('');
+  const [pendingEmail, setPendingEmail] = useState('');
 
   const myGuestId = findMyGuestId(
     eventId,
     guests.map((g) => g.id)
   );
 
-  const handleNewResponse = useCallback(() => {
-    setMode('new');
-    setEditingGuestId(null);
-    setEditingAnswers({});
-  }, []);
-
-  const handleGuestClick = useCallback(
-    (guestId: string) => {
-      if (isFixed) return;
-      const token = getToken(eventId, guestId);
-      if (!token) return;
-
-      const guest = guests.find((g) => g.id === guestId);
+  // Button click: if existing guest, enter edit mode directly; otherwise show profile dialog
+  const handleButtonClick = useCallback(() => {
+    if (myGuestId) {
+      // Edit existing response: load answers directly (no dialog)
+      const guest = guests.find((g) => g.id === myGuestId);
       if (!guest) return;
+      const token = getToken(eventId, myGuestId);
+      if (!token) {
+        toast.error(t('editTokenExpired'));
+        return;
+      }
 
       const answers: Record<string, VoteStatus> = {};
       for (const a of guest.answers) {
@@ -67,10 +85,25 @@ export function VotingForm({
       }
 
       setMode('edit');
-      setEditingGuestId(guestId);
+      setEditingGuestId(myGuestId);
       setEditingAnswers(answers);
+    } else {
+      // New response: show profile dialog first
+      setShowProfileDialog(true);
+    }
+  }, [myGuestId, guests, eventId, getToken, t]);
+
+  // Profile submit: save name/email to state, then enter edit mode
+  const handleProfileSubmit = useCallback(
+    (name: string, email: string) => {
+      setPendingName(name);
+      setPendingEmail(email);
+      setShowProfileDialog(false);
+      setMode('new');
+      setEditingGuestId(null);
+      setEditingAnswers({});
     },
-    [eventId, guests, isFixed, getToken]
+    []
   );
 
   const handleAnswerChange = useCallback(
@@ -88,53 +121,51 @@ export function VotingForm({
     []
   );
 
-  const handleSaveNew = useCallback(() => {
-    setShowProfileDialog(true);
-  }, []);
+  // Save new response: register guest with pending name/email + answers
+  const handleSaveNew = useCallback(async () => {
+    setSaving(true);
+    try {
+      const answers: Answer[] = Object.entries(editingAnswers).map(
+        ([candidateId, status]) => ({ candidateId, status })
+      );
 
-  const handleProfileSubmit = useCallback(
-    async (name: string, email: string) => {
-      setSaving(true);
-      try {
-        const answers: Answer[] = Object.entries(editingAnswers).map(
-          ([candidateId, status]) => ({ candidateId, status })
-        );
+      const result = await registerGuest({
+        eventId,
+        name: pendingName,
+        email: pendingEmail || undefined,
+        answers,
+      });
 
-        const result = await registerGuest({
-          eventId,
-          name,
-          email: email || undefined,
-          answers,
-        });
-
-        if (!result.success) {
-          if (result.error === 'duplicateEmail') {
-            toast.error(t('duplicateEmail'));
-          } else {
-            toast.error(tError('generic'));
-          }
-          return;
+      if (!result.success) {
+        if (result.error === 'duplicateEmail') {
+          toast.error(t('duplicateEmail'));
+        } else {
+          toast.error(tError('generic'));
         }
-
-        saveToken(eventId, result.data.guestId, result.data.editToken);
-        setShowProfileDialog(false);
-        setMode('view');
-        setEditingGuestId(null);
-        setEditingAnswers({});
-      } catch {
-        toast.error(tError('generic'));
-      } finally {
-        setSaving(false);
+        return;
       }
-    },
-    [editingAnswers, eventId, saveToken, t, tError]
-  );
+
+      saveToken(eventId, result.data.guestId, result.data.editToken);
+      setMode('view');
+      setEditingGuestId(null);
+      setEditingAnswers({});
+      setPendingName('');
+      setPendingEmail('');
+    } catch {
+      toast.error(tError('generic'));
+    } finally {
+      setSaving(false);
+    }
+  }, [editingAnswers, eventId, pendingName, pendingEmail, saveToken, t, tError]);
 
   const handleUpdateAnswer = useCallback(async () => {
     if (!editingGuestId) return;
 
     const token = getToken(eventId, editingGuestId);
-    if (!token) return;
+    if (!token) {
+      toast.error(t('editTokenExpired'));
+      return;
+    }
 
     setSaving(true);
     try {
@@ -168,39 +199,88 @@ export function VotingForm({
     setMode('view');
     setEditingGuestId(null);
     setEditingAnswers({});
+    setPendingName('');
+    setPendingEmail('');
   }, []);
 
-  const showTable = mode !== 'view' || guests.length > 0;
+  const showGrid = mode !== 'view' || guests.length > 0;
   const currentEditingGuestId = mode === 'new' ? '__new__' : editingGuestId;
+
+  const browserTz = useMemo(() => getBrowserTimezone(), []);
+
+  const tzOptions = useMemo(() => {
+    const pinned: string[] = [];
+    if (!COMMON_TIMEZONES.includes(browserTz as typeof COMMON_TIMEZONES[number])) {
+      pinned.push(browserTz);
+    }
+    if (hostTimezone !== browserTz && !COMMON_TIMEZONES.includes(hostTimezone as typeof COMMON_TIMEZONES[number])) {
+      pinned.push(hostTimezone);
+    }
+    return { pinned, common: COMMON_TIMEZONES as readonly string[] };
+  }, [browserTz, hostTimezone]);
 
   return (
     <div className="space-y-4">
-      {showTable && (
+      {showGrid && (
         <>
-          {/* PC: table */}
+          {/* Secondary timezone selector */}
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-muted-foreground whitespace-nowrap">{t('secondaryTimezone')}:</span>
+            <Select
+              value={secondaryTz ?? '__none__'}
+              onValueChange={(val) => onSecondaryTzChange(val === '__none__' ? null : val)}
+            >
+              <SelectTrigger size="sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent position="popper">
+                <SelectItem value="__none__">{t('secondaryTzNone')}</SelectItem>
+                <SelectSeparator />
+                {tzOptions.pinned.length > 0 && (
+                  <>
+                    {tzOptions.pinned.map((tz) => (
+                      <SelectItem key={tz} value={tz}>
+                        {getTimezoneName(tz, locale)}
+                      </SelectItem>
+                    ))}
+                    <SelectSeparator />
+                  </>
+                )}
+                {tzOptions.common.map((tz) => (
+                  <SelectItem key={tz} value={tz}>
+                    {getTimezoneName(tz, locale)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* PC: time grid */}
           <div className="hidden md:block">
-            <VotingTable
+            <VotingTimeGrid
               candidates={candidates}
-              guests={mode === 'new' ? [...guests, createTempGuest(candidates)] : guests}
+              guests={guests}
               hostTimezone={hostTimezone}
-              editingGuestId={mode === 'new' ? '__new__' : editingGuestId}
+              editingGuestId={currentEditingGuestId}
               onAnswerChange={handleAnswerChange}
               editingAnswers={editingAnswers}
-              onGuestClick={!isFixed ? handleGuestClick : undefined}
               fixedCandidateId={fixedCandidateId}
+              isFixed={isFixed}
+              secondaryTz={secondaryTz}
             />
           </div>
-          {/* Mobile: card */}
+          {/* Mobile: time grid */}
           <div className="md:hidden">
-            <VotingCard
+            <VotingTimeGridMobile
               candidates={candidates}
-              guests={mode === 'new' ? [...guests, createTempGuest(candidates)] : guests}
+              guests={guests}
               hostTimezone={hostTimezone}
-              editingGuestId={mode === 'new' ? '__new__' : editingGuestId}
+              editingGuestId={currentEditingGuestId}
               onAnswerChange={handleAnswerChange}
               editingAnswers={editingAnswers}
-              onGuestClick={!isFixed ? handleGuestClick : undefined}
               fixedCandidateId={fixedCandidateId}
+              isFixed={isFixed}
+              secondaryTz={secondaryTz}
             />
           </div>
         </>
@@ -210,17 +290,17 @@ export function VotingForm({
       {!isFixed && (
         <div className="flex gap-2">
           {mode === 'view' && (
-            <Button onClick={handleNewResponse}>
+            <Button onClick={handleButtonClick}>
               {myGuestId ? t('editResponse') : t('newResponse')}
             </Button>
           )}
           {mode === 'new' && (
             <>
               <Button onClick={handleSaveNew} disabled={saving}>
-                {t('submit')}
+                {saving ? '...' : t('submit')}
               </Button>
               <Button variant="outline" onClick={handleCancel}>
-                {t('noAnswer')}
+                {tCommon('cancel')}
               </Button>
             </>
           )}
@@ -230,7 +310,7 @@ export function VotingForm({
                 {saving ? '...' : t('update')}
               </Button>
               <Button variant="outline" onClick={handleCancel}>
-                {t('noAnswer')}
+                {tCommon('cancel')}
               </Button>
             </>
           )}
@@ -241,19 +321,8 @@ export function VotingForm({
         open={showProfileDialog}
         onOpenChange={setShowProfileDialog}
         onSubmit={handleProfileSubmit}
-        loading={saving}
+        loading={false}
       />
     </div>
   );
-}
-
-function createTempGuest(candidates: Candidate[]): GuestDocument {
-  return {
-    id: '__new__',
-    name: '---',
-    editTokenHash: '',
-    answers: [],
-    registeredAt: new Date(),
-    updatedAt: new Date(),
-  };
 }
