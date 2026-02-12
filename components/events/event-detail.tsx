@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { CheckCircle, Edit, Lock, Trash2 } from 'lucide-react';
@@ -15,6 +15,7 @@ import { TimezoneBadge } from '@/components/timezone/timezone-badge';
 import { FixEventDialog } from '@/components/events/fix-event-dialog';
 import { DeleteEventDialog } from '@/components/events/delete-event-dialog';
 import { formatCandidateDateFull, getBrowserTimezone, getTimezoneName } from '@/lib/timezone';
+import { HOST_TOKEN_STORAGE_PREFIX } from '@/lib/constants';
 import type { EventDocument, Locale } from '@/types';
 
 interface EventDetailProps {
@@ -33,8 +34,15 @@ export function EventDetail({ initialEvent }: EventDetailProps) {
   const { guests } = useGuests(initialEvent.id);
 
   const event = realtimeEvent || initialEvent;
-  const isHost = user?.uid === event.hostId;
   const isFixed = event.status === 'fixed';
+
+  // Check host status: authenticated user OR guest host with token
+  const [isHost, setIsHost] = useState(false);
+  useEffect(() => {
+    const isAuthHost = !!user && user.uid === event.hostId;
+    const hostToken = localStorage.getItem(`${HOST_TOKEN_STORAGE_PREFIX}${event.id}`);
+    setIsHost(isAuthHost || !!hostToken);
+  }, [user, event.hostId, event.id]);
 
   const fixedCandidate = isFixed
     ? event.candidates.find((c) => c.id === event.fixedCandidateId)

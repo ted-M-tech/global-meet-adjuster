@@ -26,6 +26,7 @@ export const createEventSchema = z.object({
   timezone: z.string().min(1),
   candidates: z.array(candidateSchema)
     .min(1, { message: 'validation.minCandidates' }),
+  hostName: z.string().min(1).max(50).optional(),
 });
 
 export const updateEventSchema = z.object({
@@ -35,6 +36,7 @@ export const updateEventSchema = z.object({
   duration: durationSchema.optional(),
   candidatesToAdd: z.array(candidateSchema).optional(),
   candidateIdsToRemove: z.array(z.string()).optional(),
+  hostEditToken: z.string().uuid().optional(),
 });
 
 export const voteStatusSchema = z.enum(['ok', 'maybe', 'ng']);
@@ -63,8 +65,10 @@ export const updateGuestAnswerSchema = z.object({
 export const fixEventSchema = z.object({
   eventId: z.string().min(1),
   candidateId: z.string().min(1),
+  hostEditToken: z.string().uuid().optional(),
 });
 
 export const deleteEventSchema = z.object({
   eventId: z.string().min(1),
+  hostEditToken: z.string().uuid().optional(),
 });

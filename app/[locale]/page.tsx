@@ -4,13 +4,10 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import { Globe, Clock, Users } from 'lucide-react';
-import { useAuth } from '@/providers/auth-provider';
-import { LoginButton } from '@/components/auth/login-button';
 import { Button } from '@/components/ui/button';
 
 export default function LandingPage() {
   const t = useTranslations();
-  const { user } = useAuth();
   const router = useRouter();
   const locale = useLocale();
 
@@ -42,22 +39,18 @@ export default function LandingPage() {
           <div className="flex flex-col items-center gap-2 p-4">
             <Users className="h-8 w-8 text-primary" />
             <span className="text-sm text-muted-foreground">
-              {locale === 'ja' ? 'ログイン不要で回答' : 'No login to respond'}
+              {locale === 'ja' ? 'ログイン不要' : 'No login required'}
             </span>
           </div>
         </div>
 
-        {user ? (
-          <Button
-            size="lg"
-            className="text-base px-8"
-            onClick={() => router.push(`/${locale}/dashboard`)}
-          >
-            {t('dashboard.title')}
-          </Button>
-        ) : (
-          <LoginButton size="lg" label={t('landing.cta')} />
-        )}
+        <Button
+          size="lg"
+          className="text-base px-8"
+          onClick={() => router.push(`/${locale}/events/new`)}
+        >
+          {t('landing.cta')}
+        </Button>
       </div>
     </div>
   );

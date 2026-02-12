@@ -22,20 +22,23 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TimeGridPicker } from './time-grid-picker';
 import { SharePanel } from './share-panel';
 import { createEvent, updateEvent } from '@/app/actions/event';
+import { useAuth } from '@/providers/auth-provider';
 import { getBrowserTimezone } from '@/lib/timezone';
-import { DURATIONS } from '@/lib/constants';
+import { DURATIONS, HOST_TOKEN_STORAGE_PREFIX } from '@/lib/constants';
 import type { Candidate, Duration, EventDocument } from '@/types';
 
 const formSchema = z.object({
   title: z.string().min(1).max(100),
   description: z.string().max(500).default(''),
   duration: z.enum(['30', '60', '90', '120']).transform(Number),
+  hostName: z.string().max(50).default(''),
 });
 
 type FormValues = {
   title: string;
   description: string;
   duration: Duration;
+  hostName: string;
 };
 
 interface EventFormProps {
@@ -45,10 +48,12 @@ interface EventFormProps {
 
 export function EventForm({ mode, event }: EventFormProps) {
   const t = useTranslations('event');
+  const tVoting = useTranslations('voting');
   const tValidation = useTranslations('validation');
   const tError = useTranslations('error');
   const router = useRouter();
   const locale = useLocale();
+  const { user } = useAuth();
   const [isPending, startTransition] = useTransition();
 
   const [candidates, setCandidates] = useState<Candidate[]>(
@@ -69,6 +74,7 @@ export function EventForm({ mode, event }: EventFormProps) {
       title: event?.title ?? '',
       description: event?.description ?? '',
       duration: String(event?.duration ?? 60) as '30' | '60' | '90' | '120',
+      hostName: '',
     },
   });
 
@@ -94,6 +100,11 @@ export function EventForm({ mode, event }: EventFormProps) {
     [mode, event]
   );
 
+  const getHostEditToken = useCallback((eventId: string) => {
+    if (typeof window === 'undefined') return undefined;
+    return localStorage.getItem(`${HOST_TOKEN_STORAGE_PREFIX}${eventId}`) || undefined;
+  }, []);
+
   const onSubmit = useCallback(
     (data: Record<string, unknown>) => {
       const values = data as unknown as FormValues;
@@ -115,9 +126,17 @@ export function EventForm({ mode, event }: EventFormProps) {
                 start: c.start,
                 end: c.end,
               })),
+              hostName: !user ? values.hostName : undefined,
             });
 
             if (result.success) {
+              // Store host edit token for guest hosts
+              if (result.data.hostEditToken) {
+                localStorage.setItem(
+                  `${HOST_TOKEN_STORAGE_PREFIX}${result.data.eventId}`,
+                  result.data.hostEditToken
+                );
+              }
               setCreatedEventId(result.data.eventId);
             } else {
               toast.error(tError('generic'));
@@ -138,6 +157,7 @@ export function EventForm({ mode, event }: EventFormProps) {
               candidateIdsToRemove: removedCandidateIds.length
                 ? removedCandidateIds
                 : undefined,
+              hostEditToken: getHostEditToken(event.id),
             });
 
             if (result.success) {
@@ -151,7 +171,7 @@ export function EventForm({ mode, event }: EventFormProps) {
         }
       });
     },
-    [candidates, mode, event, removedCandidateIds, locale, router, tValidation, tError]
+    [candidates, mode, event, removedCandidateIds, locale, router, user, tValidation, tError, getHostEditToken]
   );
 
   if (createdEventId) {
@@ -182,6 +202,19 @@ export function EventForm({ mode, event }: EventFormProps) {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {/* Guest host name - only show in create mode when not logged in */}
+            {isCreate && !user && (
+              <div className="space-y-2">
+                <Label htmlFor="hostName">{tVoting('guestName')}</Label>
+                <Input
+                  id="hostName"
+                  placeholder={tVoting('guestNamePlaceholder')}
+                  maxLength={50}
+                  {...register('hostName')}
+                />
+              </div>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="title">{t('create.eventTitle')}</Label>
               <Input

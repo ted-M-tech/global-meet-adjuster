@@ -13,6 +13,7 @@ import {
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithRedirect,
+  getRedirectResult,
   signOut as firebaseSignOut,
   type User,
 } from 'firebase/auth';
@@ -39,12 +40,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const sessionRefreshed = useRef(false);
 
   useEffect(() => {
+    // Handle redirect result from signInWithRedirect
+    getRedirectResult(auth).catch(() => {
+      // Redirect result errors are non-fatal
+    });
+
     return onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
       setLoading(false);
 
       // Auto-refresh server session when client-side auth is valid
-      // This handles expired session cookies (5-day maxAge)
       if (firebaseUser && !sessionRefreshed.current) {
         sessionRefreshed.current = true;
         try {

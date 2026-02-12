@@ -26,6 +26,8 @@ export interface Candidate {
 export interface EventDocument {
   id: string;
   hostId: string;
+  hostName?: string;
+  hostEditTokenHash?: string;
   title: string;
   description: string;
   duration: Duration;
@@ -63,6 +65,7 @@ export interface CreateEventInput {
   duration: Duration;
   timezone: string;
   candidates: { start: Date; end: Date }[];
+  hostName?: string;
 }
 
 export interface UpdateEventInput {
@@ -72,6 +75,7 @@ export interface UpdateEventInput {
   duration?: Duration;
   candidatesToAdd?: { start: Date; end: Date }[];
   candidateIdsToRemove?: string[];
+  hostEditToken?: string;
 }
 
 export interface RegisterGuestInput {

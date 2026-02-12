@@ -1,8 +1,6 @@
 import { notFound, redirect } from 'next/navigation';
 import { Timestamp } from 'firebase-admin/firestore';
 import { adminDb } from '@/lib/firebase/admin';
-import { getAuthUser } from '@/lib/firebase/auth';
-import { AuthGuard } from '@/components/auth/auth-guard';
 import { EventForm } from '@/components/events/event-form';
 import type { EventDocument, Candidate } from '@/types';
 
@@ -21,11 +19,6 @@ function convertTimestamp(ts: unknown): Date {
 export default async function EditEventPage({ params }: EditEventPageProps) {
   const { locale, id } = await params;
 
-  const user = await getAuthUser();
-  if (!user) {
-    redirect(`/${locale}`);
-  }
-
   if (!adminDb) {
     notFound();
   }
@@ -36,10 +29,6 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
   }
 
   const data = eventDoc.data()!;
-
-  if (data.hostId !== user.uid) {
-    redirect(`/${locale}/events/${id}`);
-  }
 
   if (data.status === 'fixed') {
     redirect(`/${locale}/events/${id}`);
@@ -68,9 +57,5 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
     updatedAt: convertTimestamp(data.updatedAt),
   };
 
-  return (
-    <AuthGuard>
-      <EventForm mode="edit" event={event} />
-    </AuthGuard>
-  );
+  return <EventForm mode="edit" event={event} />;
 }

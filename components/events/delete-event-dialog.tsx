@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { deleteEvent } from '@/app/actions/event';
+import { HOST_TOKEN_STORAGE_PREFIX } from '@/lib/constants';
 import type { EventStatus } from '@/types';
 
 interface DeleteEventDialogProps {
@@ -42,9 +43,10 @@ export function DeleteEventDialog({
   const handleDelete = useCallback(async () => {
     setLoading(true);
     try {
-      const result = await deleteEvent({ eventId });
+      const hostEditToken = localStorage.getItem(`${HOST_TOKEN_STORAGE_PREFIX}${eventId}`) || undefined;
+      const result = await deleteEvent({ eventId, hostEditToken });
       if (result.success) {
-        router.push(`/${locale}/dashboard`);
+        router.push(`/${locale}`);
       } else {
         toast.error(tError('generic'));
       }

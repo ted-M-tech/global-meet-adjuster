@@ -14,6 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { formatCandidateDateFull } from '@/lib/timezone';
 import { fixEvent } from '@/app/actions/event';
+import { HOST_TOKEN_STORAGE_PREFIX } from '@/lib/constants';
 import type { Candidate, Locale } from '@/types';
 
 interface FixEventDialogProps {
@@ -43,7 +44,8 @@ export function FixEventDialog({
 
     setLoading(true);
     try {
-      const result = await fixEvent({ eventId, candidateId: selectedId });
+      const hostEditToken = localStorage.getItem(`${HOST_TOKEN_STORAGE_PREFIX}${eventId}`) || undefined;
+      const result = await fixEvent({ eventId, candidateId: selectedId, hostEditToken });
       if (!result.success) {
         toast.error(tError('generic'));
         return;
