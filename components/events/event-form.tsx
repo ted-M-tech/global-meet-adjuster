@@ -22,7 +22,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TimeGridPicker } from './time-grid-picker';
 import { SharePanel } from './share-panel';
 import { createEvent, updateEvent } from '@/app/actions/event';
-import { useAuth } from '@/providers/auth-provider';
 import { getBrowserTimezone } from '@/lib/timezone';
 import { DURATIONS, HOST_TOKEN_STORAGE_PREFIX } from '@/lib/constants';
 import type { Candidate, Duration, EventDocument } from '@/types';
@@ -53,7 +52,6 @@ export function EventForm({ mode, event }: EventFormProps) {
   const tError = useTranslations('error');
   const router = useRouter();
   const locale = useLocale();
-  const { user } = useAuth();
   const [isPending, startTransition] = useTransition();
 
   const [candidates, setCandidates] = useState<Candidate[]>(
@@ -126,7 +124,7 @@ export function EventForm({ mode, event }: EventFormProps) {
                 start: c.start,
                 end: c.end,
               })),
-              hostName: !user ? values.hostName : undefined,
+              hostName: values.hostName || undefined,
             });
 
             if (result.success) {
@@ -171,7 +169,7 @@ export function EventForm({ mode, event }: EventFormProps) {
         }
       });
     },
-    [candidates, mode, event, removedCandidateIds, locale, router, user, tValidation, tError, getHostEditToken]
+    [candidates, mode, event, removedCandidateIds, locale, router, tValidation, tError, getHostEditToken]
   );
 
   if (createdEventId) {
@@ -202,8 +200,7 @@ export function EventForm({ mode, event }: EventFormProps) {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Guest host name - only show in create mode when not logged in */}
-            {isCreate && !user && (
+            {isCreate && (
               <div className="space-y-2">
                 <Label htmlFor="hostName">{tVoting('guestName')}</Label>
                 <Input

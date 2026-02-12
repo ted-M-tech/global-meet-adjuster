@@ -125,7 +125,7 @@ export function TimeGridMobile({
                 style={{ height: SLOT_HEIGHT }}
               >
                 {slot % 2 === 0 && (
-                  <span className={slot > 0 ? '-translate-y-1/2' : ''}>
+                  <span className={slot > 0 ? '-translate-y-1/2' : 'translate-y-0.5'}>
                     {formatTimeLabel(slot)}
                   </span>
                 )}

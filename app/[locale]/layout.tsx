@@ -2,7 +2,6 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
-import { AuthProvider } from '@/providers/auth-provider';
 import { Header } from '@/components/layout/header';
 
 interface LocaleLayoutProps {
@@ -21,10 +20,8 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <AuthProvider>
-        <Header />
-        <main className="container mx-auto px-4 py-8">{children}</main>
-      </AuthProvider>
+      <Header />
+      <main className="container mx-auto px-4 py-8">{children}</main>
     </NextIntlClientProvider>
   );
 }

@@ -11,24 +11,14 @@
     "copy": "Copy",
     "copied": "Copied!"
   },
-  "auth": {
-    "loginWithGoogle": "Sign in with Google",
-    "logout": "Sign out",
-    "loginRequired": "Please sign in to continue"
-  },
   "landing": {
     "title": "Schedule meetings across time zones",
     "subtitle": "A scheduling tool with automatic timezone conversion",
     "cta": "Get started for free"
   },
-  "dashboard": {
-    "title": "My Events",
-    "empty": "No events yet",
-    "createNew": "Create new event",
-    "status": {
-      "planning": "Planning",
-      "fixed": "Confirmed"
-    }
+  "status": {
+    "planning": "Planning",
+    "fixed": "Confirmed"
   },
   "event": {
     "create": {

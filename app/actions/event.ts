@@ -3,7 +3,6 @@
 import { randomUUID, createHash } from 'crypto';
 import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { adminDb } from '@/lib/firebase/admin';
-import { getAuthUser } from '@/lib/firebase/auth';
 import {
   createEventSchema,
   updateEventSchema,
@@ -19,32 +18,23 @@ function hashToken(token: string): string {
   return createHash('sha256').update(token).digest('hex');
 }
 
-/**
- * Verify that the caller is the event host.
- * Works for both authenticated users (via session) and guest hosts (via edit token).
- */
-async function verifyHost(
+function verifyHostToken(
   event: Record<string, unknown>,
   hostEditToken?: string
-): Promise<void> {
-  // Try authenticated user first
-  const user = await getAuthUser();
-  if (user && event.hostId === user.uid) return;
-
-  // Try guest host token
-  if (hostEditToken && event.hostEditTokenHash) {
-    const tokenHash = hashToken(hostEditToken);
-    if (tokenHash === event.hostEditTokenHash) return;
+): void {
+  if (!hostEditToken || !event.hostEditTokenHash) {
+    throw new Error('Unauthorized');
   }
-
-  throw new Error('Unauthorized');
+  const tokenHash = hashToken(hostEditToken);
+  if (tokenHash !== event.hostEditTokenHash) {
+    throw new Error('Unauthorized');
+  }
 }
 
 export async function createEvent(
   input: CreateEventInput
-): Promise<ActionResult<{ eventId: string; hostEditToken?: string }>> {
+): Promise<ActionResult<{ eventId: string; hostEditToken: string }>> {
   try {
-    const user = await getAuthUser();
     const parsed = createEventSchema.parse(input);
 
     const now = Timestamp.now();
@@ -57,46 +47,28 @@ export async function createEvent(
     }));
 
     const eventRef = adminDb.collection('events').doc();
+    const hostEditToken = randomUUID();
+    const hostEditTokenHash = hashToken(hostEditToken);
 
-    if (user) {
-      // Authenticated host
-      await eventRef.set({
-        hostId: user.uid,
-        title: parsed.title,
-        description: parsed.description || '',
-        duration: parsed.duration,
-        timezone: parsed.timezone,
-        candidates,
-        status: 'planning',
-        expiresAt,
-        createdAt: now,
-        updatedAt: now,
-      });
-      return { success: true, data: { eventId: eventRef.id } };
-    } else {
-      // Guest host
-      const hostEditToken = randomUUID();
-      const hostEditTokenHash = hashToken(hostEditToken);
+    await eventRef.set({
+      hostId: `guest_${eventRef.id}`,
+      hostName: parsed.hostName || '',
+      hostEditTokenHash,
+      title: parsed.title,
+      description: parsed.description || '',
+      duration: parsed.duration,
+      timezone: parsed.timezone,
+      candidates,
+      status: 'planning',
+      expiresAt,
+      createdAt: now,
+      updatedAt: now,
+    });
 
-      await eventRef.set({
-        hostId: `guest_${eventRef.id}`,
-        hostName: parsed.hostName || '',
-        hostEditTokenHash,
-        title: parsed.title,
-        description: parsed.description || '',
-        duration: parsed.duration,
-        timezone: parsed.timezone,
-        candidates,
-        status: 'planning',
-        expiresAt,
-        createdAt: now,
-        updatedAt: now,
-      });
-      return {
-        success: true,
-        data: { eventId: eventRef.id, hostEditToken },
-      };
-    }
+    return {
+      success: true,
+      data: { eventId: eventRef.id, hostEditToken },
+    };
   } catch (error) {
     return {
       success: false,
@@ -120,7 +92,7 @@ export async function updateEvent(
       const event = eventDoc.data() as EventDocument;
       if (event.status === 'fixed') throw new Error('Cannot edit fixed event');
 
-      await verifyHost(eventDoc.data()!, parsed.hostEditToken);
+      verifyHostToken(eventDoc.data()!, parsed.hostEditToken);
 
       const updateData: Record<string, unknown> = {
         updatedAt: FieldValue.serverTimestamp(),
@@ -201,7 +173,7 @@ export async function deleteEvent(
     const eventDoc = await eventRef.get();
     if (!eventDoc.exists) throw new Error('Event not found');
 
-    await verifyHost(eventDoc.data()!, parsed.hostEditToken);
+    verifyHostToken(eventDoc.data()!, parsed.hostEditToken);
 
     const guestsSnap = await adminDb
       .collection(`events/${parsed.eventId}/guests`)
@@ -234,7 +206,7 @@ export async function fixEvent(
     if (!eventDoc.exists) throw new Error('Event not found');
 
     const event = eventDoc.data()!;
-    await verifyHost(event, parsed.hostEditToken);
+    verifyHostToken(event, parsed.hostEditToken);
 
     if (event.status === 'fixed') throw new Error('Event already fixed');
 

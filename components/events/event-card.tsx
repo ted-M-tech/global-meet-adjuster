@@ -36,7 +36,7 @@ export function EventCard({ event }: EventCardProps) {
             <Badge
               variant={event.status === 'fixed' ? 'default' : 'secondary'}
             >
-              {t(`dashboard.status.${event.status}`)}
+              {t(`status.${event.status}`)}
             </Badge>
           </div>
         </CardHeader>

@@ -11,24 +11,14 @@
     "copy": "コピー",
     "copied": "コピーしました"
   },
-  "auth": {
-    "loginWithGoogle": "Googleでログイン",
-    "logout": "ログアウト",
-    "loginRequired": "ログインが必要です"
-  },
   "landing": {
     "title": "時差を超えて、会議をスムーズに",
     "subtitle": "タイムゾーンを自動変換する日程調整ツール",
     "cta": "無料で始める"
   },
-  "dashboard": {
-    "title": "イベント一覧",
-    "empty": "イベントはまだありません",
-    "createNew": "新しいイベントを作成",
-    "status": {
-      "planning": "調整中",
-      "fixed": "確定済み"
-    }
+  "status": {
+    "planning": "調整中",
+    "fixed": "確定済み"
   },
   "event": {
     "create": {

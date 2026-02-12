@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEvent } from '@/hooks/use-event';
 import { useGuests } from '@/hooks/use-guests';
-import { useAuth } from '@/providers/auth-provider';
 import { VotingForm } from '@/components/voting/voting-form';
 import { TimezoneBadge } from '@/components/timezone/timezone-badge';
 import { FixEventDialog } from '@/components/events/fix-event-dialog';
@@ -25,10 +24,9 @@ interface EventDetailProps {
 export function EventDetail({ initialEvent }: EventDetailProps) {
   const t = useTranslations('event.detail');
   const tCommon = useTranslations('common');
-  const tDashboard = useTranslations('dashboard');
+  const tStatus = useTranslations('status');
   const locale = useLocale() as Locale;
   const router = useRouter();
-  const { user } = useAuth();
 
   const { event: realtimeEvent } = useEvent(initialEvent.id);
   const { guests } = useGuests(initialEvent.id);
@@ -36,13 +34,12 @@ export function EventDetail({ initialEvent }: EventDetailProps) {
   const event = realtimeEvent || initialEvent;
   const isFixed = event.status === 'fixed';
 
-  // Check host status: authenticated user OR guest host with token
+  // Check host status via localStorage token
   const [isHost, setIsHost] = useState(false);
   useEffect(() => {
-    const isAuthHost = !!user && user.uid === event.hostId;
     const hostToken = localStorage.getItem(`${HOST_TOKEN_STORAGE_PREFIX}${event.id}`);
-    setIsHost(isAuthHost || !!hostToken);
-  }, [user, event.hostId, event.id]);
+    setIsHost(!!hostToken);
+  }, [event.id]);
 
   const fixedCandidate = isFixed
     ? event.candidates.find((c) => c.id === event.fixedCandidateId)
@@ -90,10 +87,10 @@ export function EventDetail({ initialEvent }: EventDetailProps) {
             {isFixed ? (
               <>
                 <Lock className="mr-1 h-3 w-3" />
-                {tDashboard('status.fixed')}
+                {tStatus('fixed')}
               </>
             ) : (
-              tDashboard('status.planning')
+              tStatus('planning')
             )}
           </Badge>
         </div>
