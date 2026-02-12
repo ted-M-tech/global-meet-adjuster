@@ -174,8 +174,12 @@ export function TimeGridPicker({
       const day = sortedDates.find((d) => formatDayKey(d) === dayKey);
       if (!day) return;
 
+      // Enforce minimum duration based on configured meeting duration
+      const durationSlots = duration / 30;
+      const effectiveEnd = Math.max(endSlot, startSlot + durationSlots);
+
       const start = slotToDate(day, startSlot);
-      const end = slotToDate(day, endSlot);
+      const end = slotToDate(day, effectiveEnd);
 
       // Past time check
       if (start <= new Date()) {

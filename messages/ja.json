@@ -120,7 +120,10 @@
     "prevDay": "前の日",
     "nextDay": "次の日",
     "secondaryTimezone": "第二タイムゾーン",
-    "secondaryTzNone": "なし"
+    "secondaryTzNone": "なし",
+    "autoSaving": "保存中...",
+    "autoSaved": "保存済み",
+    "done": "完了"
   },
   "timezone": {
     "local": "ローカル時間",

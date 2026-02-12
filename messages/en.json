@@ -120,7 +120,10 @@
     "prevDay": "Previous day",
     "nextDay": "Next day",
     "secondaryTimezone": "Secondary timezone",
-    "secondaryTzNone": "None"
+    "secondaryTzNone": "None",
+    "autoSaving": "Saving...",
+    "autoSaved": "Saved",
+    "done": "Done"
   },
   "timezone": {
     "local": "Local time",

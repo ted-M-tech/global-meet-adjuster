@@ -102,20 +102,22 @@ export function VotingTimeGrid({
               {primaryTzAbbr}
             </div>
             {/* Time labels */}
-            {Array.from({ length: TOTAL_SLOTS }).map((_, slot) => (
-              <div
-                key={`time-${slot}`}
-                className={cn(
-                  'border-r text-[11px] text-muted-foreground pr-2 flex items-start justify-end',
-                  slot % 2 === 0 && 'border-t border-t-border/40'
-                )}
-                style={{ height: DESKTOP_SLOT_HEIGHT }}
-              >
-                {slot % 2 === 0 && (
-                  <span className="-translate-y-1/2">{formatTimeLabel(slot)}</span>
-                )}
-              </div>
-            ))}
+            <div className="overflow-hidden">
+              {Array.from({ length: TOTAL_SLOTS }).map((_, slot) => (
+                <div
+                  key={`time-${slot}`}
+                  className={cn(
+                    'border-r text-[11px] text-muted-foreground pr-2 flex items-start justify-end',
+                    slot % 2 === 0 && 'border-t border-t-border/40'
+                  )}
+                  style={{ height: DESKTOP_SLOT_HEIGHT }}
+                >
+                  {slot % 2 === 0 && (
+                    <span className="-translate-y-1/2">{formatTimeLabel(slot)}</span>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Day columns */}
@@ -211,22 +213,24 @@ export function VotingTimeGrid({
                 {secondaryTzAbbr}
               </div>
               {/* Secondary time labels */}
-              {Array.from({ length: TOTAL_SLOTS }).map((_, slot) => (
-                <div
-                  key={`sec-${slot}`}
-                  className={cn(
-                    'border-l text-[11px] text-muted-foreground pl-2 flex items-start justify-start',
-                    slot % 2 === 0 && 'border-t border-t-border/40'
-                  )}
-                  style={{ height: DESKTOP_SLOT_HEIGHT }}
-                >
-                  {slot % 2 === 0 && (
-                    <span className="-translate-y-1/2">
-                      {secondaryLabels[slot / 2]}
-                    </span>
-                  )}
-                </div>
-              ))}
+              <div className="overflow-hidden">
+                {Array.from({ length: TOTAL_SLOTS }).map((_, slot) => (
+                  <div
+                    key={`sec-${slot}`}
+                    className={cn(
+                      'border-l text-[11px] text-muted-foreground pl-2 flex items-start justify-start',
+                      slot % 2 === 0 && 'border-t border-t-border/40'
+                    )}
+                    style={{ height: DESKTOP_SLOT_HEIGHT }}
+                  >
+                    {slot % 2 === 0 && (
+                      <span className="-translate-y-1/2">
+                        {secondaryLabels[slot / 2]}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
