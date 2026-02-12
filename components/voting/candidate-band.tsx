@@ -81,19 +81,19 @@ export const CandidateBand = forwardRef<HTMLButtonElement, CandidateBandProps>(
         }}
         {...props}
       >
-        <div className={cn('px-1.5 py-0.5 overflow-hidden h-full', isCompact ? 'flex items-center gap-1' : 'space-y-0.5')}>
+        <div className={cn('px-2 py-1 overflow-hidden h-full', isCompact ? 'flex items-center gap-1.5' : 'space-y-1')}>
           {/* Vote summary */}
-          <div className="flex items-center gap-1 text-[10px] leading-tight flex-shrink-0">
-            {isFixed && <Check className="h-3 w-3 text-green-600 flex-shrink-0" />}
-            <span className="text-green-600">{t('ok')}{okCount}</span>
-            <span className="text-yellow-600">{t('maybe')}{maybeCount}</span>
-            <span className="text-red-600">{t('ng')}{ngCount}</span>
+          <div className="flex items-center gap-1.5 text-xs leading-tight flex-shrink-0">
+            {isFixed && <Check className="h-3.5 w-3.5 text-green-600 flex-shrink-0" />}
+            <span className="text-green-600 font-medium">{t('ok')}{okCount}</span>
+            <span className="text-yellow-600 font-medium">{t('maybe')}{maybeCount}</span>
+            <span className="text-red-600 font-medium">{t('ng')}{ngCount}</span>
           </div>
 
           {/* My vote badge (editing mode) */}
           {isEditing && myVote && (
             <span className={cn(
-              'inline-flex items-center rounded-full px-1.5 py-0 text-[10px] font-medium flex-shrink-0',
+              'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium flex-shrink-0',
               voteColors[myVote]
             )}>
               {voteLabels[myVote]}

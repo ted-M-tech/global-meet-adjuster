@@ -113,7 +113,7 @@ export function VotingTimeGrid({
                   style={{ height: DESKTOP_SLOT_HEIGHT }}
                 >
                   {slot % 2 === 0 && (
-                    <span className="-translate-y-1/2">{formatTimeLabel(slot)}</span>
+                    <span className={slot > 0 ? '-translate-y-1/2' : ''}>{formatTimeLabel(slot)}</span>
                   )}
                 </div>
               ))}
@@ -224,7 +224,7 @@ export function VotingTimeGrid({
                     style={{ height: DESKTOP_SLOT_HEIGHT }}
                   >
                     {slot % 2 === 0 && (
-                      <span className="-translate-y-1/2">
+                      <span className={slot > 0 ? '-translate-y-1/2' : ''}>
                         {secondaryLabels[slot / 2]}
                       </span>
                     )}

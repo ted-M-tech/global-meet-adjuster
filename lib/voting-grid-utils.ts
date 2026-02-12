@@ -7,7 +7,7 @@ import { countStatus, getBestCandidateId } from '@/components/voting/voting-summ
 // ============================================================
 
 export const TOTAL_SLOTS = 48;
-export const DESKTOP_SLOT_HEIGHT = 28;
+export const DESKTOP_SLOT_HEIGHT = 36;
 export const MOBILE_SLOT_HEIGHT = 44;
 export const INITIAL_SCROLL_SLOT = 16; // 8:00
 

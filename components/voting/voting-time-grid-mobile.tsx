@@ -154,7 +154,7 @@ export function VotingTimeGridMobile({
                   style={{ height: MOBILE_SLOT_HEIGHT }}
                 >
                   {slot % 2 === 0 && (
-                    <span className="-translate-y-1/2">
+                    <span className={slot > 0 ? '-translate-y-1/2' : ''}>
                       {formatTimeLabel(slot)}
                     </span>
                   )}
@@ -252,7 +252,7 @@ export function VotingTimeGridMobile({
                     style={{ height: MOBILE_SLOT_HEIGHT }}
                   >
                     {slot % 2 === 0 && (
-                      <span className="-translate-y-1/2">
+                      <span className={slot > 0 ? '-translate-y-1/2' : ''}>
                         {secondaryLabels[slot / 2]}
                       </span>
                     )}

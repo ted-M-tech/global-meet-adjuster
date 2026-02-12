@@ -198,7 +198,7 @@ export function TimeGridPicker({
 
       onAdd(start, end);
     },
-    [sortedDates, candidates, onAdd, t]
+    [sortedDates, candidates, duration, onAdd, t]
   );
 
   // Format day header based on locale
