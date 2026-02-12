@@ -57,7 +57,7 @@ export function GuestProfileDialog({
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{t('submit')}</DialogTitle>
+            <DialogTitle>{t('startResponse')}</DialogTitle>
             <DialogDescription />
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -91,7 +91,7 @@ export function GuestProfileDialog({
           </div>
           <DialogFooter>
             <Button type="submit" disabled={loading}>
-              {loading ? '...' : t('submit')}
+              {loading ? '...' : t('startResponse')}
             </Button>
           </DialogFooter>
         </form>

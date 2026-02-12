@@ -123,7 +123,8 @@
     "secondaryTzNone": "なし",
     "autoSaving": "保存中...",
     "autoSaved": "保存済み",
-    "done": "完了"
+    "done": "完了",
+    "startResponse": "回答を開始"
   },
   "timezone": {
     "local": "ローカル時間",
