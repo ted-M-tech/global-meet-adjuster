@@ -12,7 +12,7 @@ import {
 import {
   GoogleAuthProvider,
   onAuthStateChanged,
-  signInWithPopup,
+  signInWithRedirect,
   signOut as firebaseSignOut,
   type User,
 } from 'firebase/auth';
@@ -62,10 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const handleSignIn = useCallback(async () => {
     const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    const idToken = await result.user.getIdToken();
-    await serverSignIn(idToken);
-    sessionRefreshed.current = true;
+    await signInWithRedirect(auth, provider);
   }, []);
 
   const handleSignOut = useCallback(async () => {
